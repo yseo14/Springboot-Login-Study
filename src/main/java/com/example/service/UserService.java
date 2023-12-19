@@ -75,7 +75,7 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
 
         // loginId로 찾은 유저의 password와 입력된 password가 다를 경우 null return
-        if (user.getPassword().equals(request.getPassword())) {
+        if (!user.getPassword().equals(request.getPassword())) {
             return null;
         }
 
