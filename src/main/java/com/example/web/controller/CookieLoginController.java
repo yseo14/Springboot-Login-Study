@@ -14,6 +14,17 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 쿠키: 사용자가 웹사이트에 접속 시 사용자의 개인 장치에 다운로드되고, 브라우저에 저장되는 작은 텍스트 파일
+ *
+ *  로그인 성공 시 서버가 쿠키에 사용자 정보를 넣어주고,
+ *  클라이언트 측에서는 다음 요청을 할 때마다 이 쿠키를 서버에 같이 보내준다.
+ *  서버에서는 이 쿠키를 통해 로그인을 했는지, 유저 정보, 권한 등을 확인할 수 있다.
+ *
+ *  new Cookie() 를 이용해 쿠키를 생성하고, Key, Value 값을 넣어줄 수 있다.
+ *  setMaxAge() 메서드를 이용해 쿠키의 유효시간을 설정할 수 있다.
+ *  이렇게 만들어진 쿠키를 HttpServletResponse 객체에 addCookie를 통해 쿠키를 태워서 전송한다.
+ */
 
 @Controller
 @RequiredArgsConstructor
@@ -70,9 +81,12 @@ public class CookieLoginController {
 
     @GetMapping("/login")
     public String loginPage(Model model) {
+        model.addAttribute("loginType", "cookie-login");
+        model.addAttribute("pageName", "쿠키 로그인");
         model.addAttribute("loginRequest", new UserRequestDTO.LoginRequestDTO());
         return "login";
     }
+
     @PostMapping("/login")
     public String login(@ModelAttribute UserRequestDTO.LoginRequestDTO loginRequest, BindingResult bindingResult,
                         HttpServletResponse response, Model model) {
@@ -115,7 +129,7 @@ public class CookieLoginController {
         model.addAttribute("loginType", "cookie-login");
         model.addAttribute("pageName", "쿠키 로그인");
 
-        User loginUser = userService.getLoginUserById(userId);
+        User loginUser = userService.getLoginUserById(userId);  //  쿠키에 담긴 유저의 id를 통해 유저를 get
 
         if (loginUser == null) {
             return "redirect:/cookie-login/login";

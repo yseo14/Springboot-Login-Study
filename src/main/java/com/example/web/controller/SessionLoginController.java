@@ -14,6 +14,18 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.FieldError;
 
+/**
+ *  세션: 일정 시간동안 같은 사용자로부터 들어오는 일련의 요구를 하나의 상태로 보고 그 상태를 일정하게 유지시키는 기술.
+ *       쿠키와 달리 사용자의 정보를 사용자의 메모리가 아닌 서버측에 저장한다.
+ *
+ *  로그인 성공 시 세션을 하나 생성
+ *  세션의 key 값은 UUID(중복되지 않는 랜덤 값, 예측 불가)로 설정한다.
+ *  value 값에 사용자 정보를 넣는다. 생성된 세션은 서버측 세션 저장소에 보관된다. 세션의 key 값을 쿠키를 통해 사용자에게 전달한다.
+ *  사용자는 로그인 성공 이후 다른 요청을 할 때마다 이 쿠키를 서버에 같이 전송한다.
+ *  서버측에서 사용자에게 쿠키를 통해 UUID 값을 받으면, 전달 받은 UUID를 Key값으로 가지는 세션을 서버측에서 세션 저장소에서 검색
+ */
+
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/session-login")

@@ -7,8 +7,7 @@
 </head>
 <body>
 <div>
-    <h1><a th:href="|/${loginType}|">[[${pageName}]]</a></h1>
-    <hr/>
+    <h1><a th:href="|/${loginType}|">[[${pageName}]]</a></h1> <hr/>
     <h2>회원 가입</h2>
     <form th:method="post" th:action="|@{/{loginType}/join (loginType=${loginType})}|" th:object="${joinRequest}">
         <div>
@@ -45,7 +44,6 @@
     .error-class {
         color: red;
     }
-
     .error-input {
         border-color: red;
     }
