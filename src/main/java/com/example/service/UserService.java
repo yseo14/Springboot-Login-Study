@@ -1,10 +1,12 @@
 package com.example.service;
 
+import com.example.config.BCryptConfig;
 import com.example.converter.UserConverter;
 import com.example.domain.User;
 import com.example.repository.UserRepository;
 import com.example.web.dto.userDTO.UserRequestDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder encoder;
 
     // Spring Security를 사용한 로그인 구현 시 사용
     // private final BCryptPasswordEncoder encoder;
@@ -59,7 +62,7 @@ public class UserService {
      */
     public User join2(UserRequestDTO.JoinRequestDTO request) {
 
-        return userRepository.save(UserConverter.toUser(request, request.getPassword()));
+        return userRepository.save(UserConverter.toUser(request, encoder.encode(request.getPassword())));
     }
 
 
