@@ -4,7 +4,6 @@ import com.example.domain.User;
 import com.example.service.UserService;
 import com.example.web.dto.userDTO.UserRequestDTO;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -55,7 +54,7 @@ public class SecurityLoginController {
     }
 
     @PostMapping("/join")
-    public String join(@Valid @ModelAttribute UserRequestDTO.JoinRequestDTO joinRequest, BindingResult bindingResult, Model model) {
+    public String join(@Valid @ModelAttribute("joinRequest") UserRequestDTO.JoinRequestDTO joinRequest, BindingResult bindingResult, Model model) {
         model.addAttribute("loginType", "security-login");
         model.addAttribute("pageName", "security 로그인");
 

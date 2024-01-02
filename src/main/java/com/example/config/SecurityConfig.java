@@ -1,18 +1,30 @@
 package com.example.config;
 
+import com.example.auth.JwtTokenFilter;
+import com.example.auth.JwtTokenUtil;
+import com.example.auth.MyAccessDeniedHandler;
+import com.example.auth.MyAuthenticationEntryPoint;
 import com.example.domain.enums.UserRole;
+import com.example.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.security.Security;
 
 
 @EnableWebSecurity
 @EnableMethodSecurity
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -33,7 +45,28 @@ public class SecurityConfig {
                 .logout((form) -> form  //  로그아웃에 대한 정보
                         .logoutUrl("/security-login/logout")
                         .invalidateHttpSession(true).deleteCookies("JSESSIONID"))
+
+                .exceptionHandling(form -> form
+                        .authenticationEntryPoint(new MyAuthenticationEntryPoint())
+                        .accessDeniedHandler(new MyAccessDeniedHandler()))
                 .build();
+    }
+
+    private final UserService userService;
+    private static String secretKey = "my-secret-key-123123";
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+                .httpBasic(HttpBasicConfigurer::disable)
+                .csrf((AbstractHttpConfigurer::disable))
+                .sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(new JwtTokenFilter(userService, secretKey), UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/jwt-login/info").authenticated()
+                        .requestMatchers("/jwt-login/admin/**").hasAuthority((UserRole.ADMIN.name())))
+                .build();
+
     }
 
 }
