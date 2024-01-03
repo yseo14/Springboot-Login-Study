@@ -4,6 +4,7 @@ import com.example.auth.JwtTokenFilter;
 import com.example.auth.JwtTokenUtil;
 import com.example.auth.MyAccessDeniedHandler;
 import com.example.auth.MyAuthenticationEntryPoint;
+import com.example.auth.oauth.PrincipalOauth2UserService;
 import com.example.domain.enums.UserRole;
 import com.example.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,9 @@ import java.security.Security;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final PrincipalOauth2UserService principalOauth2UserService;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
@@ -46,9 +50,16 @@ public class SecurityConfig {
                         .logoutUrl("/security-login/logout")
                         .invalidateHttpSession(true).deleteCookies("JSESSIONID"))
 
+                .oauth2Login((form) -> form
+                        .loginPage("/security-login/login")
+                        .defaultSuccessUrl("/security-login")
+                        .userInfoEndpoint((service) -> service
+                                .userService(principalOauth2UserService)))
+
                 .exceptionHandling(form -> form
                         .authenticationEntryPoint(new MyAuthenticationEntryPoint())
                         .accessDeniedHandler(new MyAccessDeniedHandler()))
+
                 .build();
     }
 
@@ -68,5 +79,6 @@ public class SecurityConfig {
                 .build();
 
     }
+
 
 }

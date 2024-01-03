@@ -37,6 +37,6 @@ out/
 .vscode/
 
 ### yml
-#*.yml
+#.yml
 
 .DS_Store

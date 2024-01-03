@@ -22,4 +22,7 @@ public class User {
     private String nickname;
 
     private UserRole role;
+
+    private String provider;
+    private String providerId;
 }
